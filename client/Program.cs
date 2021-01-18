@@ -43,7 +43,9 @@ namespace MyNewService
 
                         String msg = ReciveMessageFromServer(sender);
 
-                        HandleCommand(msg, sender);
+                        String returnMsg = HandleCommand(msg, sender);
+
+                        SendMessageToServer(sender, returnMsg);
 
 
                         if (msg.Equals("done "))
@@ -87,8 +89,9 @@ namespace MyNewService
 
         }
 
-        public static void HandleCommand(String command, Socket sender)
+        public static String HandleCommand(String command, Socket sender)
         {
+            String msgToBeReturned = "";
             Console.WriteLine(command.Substring(0, command.IndexOf(" ")));
             switch (command.Substring(0, command.IndexOf(" ")))
             {
@@ -102,10 +105,12 @@ namespace MyNewService
                     break;
                 case "done":
                     Console.WriteLine("the server has requested to disconnect");
+                    msgToBeReturned = "by by server";
                     break;
                 case "chrome":
                     Console.WriteLine("opening chrome");
                     System.Diagnostics.Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe");
+                    msgToBeReturned = "opening chrome";
                     break;
                 case "ipconfig":
                     Console.WriteLine("runing ipconfig");
@@ -127,12 +132,15 @@ namespace MyNewService
                     byte[] msg = Encoding.ASCII.GetBytes(readText);
                     sender.Send(msg);
                     break;
+                case "info":
+                    msgToBeReturned = "I am yonatans client";
+                    break;
                 default:
                     Console.WriteLine("command not recognized");
+                    msgToBeReturned = "command not recognized";
                     break;
-
-
             }
+            return msgToBeReturned;
         }
 
         public static String ReciveMessageFromServer(Socket sender)
@@ -142,12 +150,24 @@ namespace MyNewService
             // Receive the response from the remote device.  
             int sizeLen = sender.Receive(size);
 
+            int rcvSize = Int32.Parse(Encoding.ASCII.GetString(size, 0, sizeLen));
 
-            byte[] bytes = new byte[sizeLen];
+
+            byte[] bytes = new byte[rcvSize];
             int bytesRec = sender.Receive(bytes);
 
             String msg = Encoding.ASCII.GetString(bytes, 0, bytesRec);
             return msg;
+        }
+
+        public static void SendMessageToServer(Socket sender, String response)
+        {
+            String msgLen = response.Length.ToString().PadLeft(10, '0');
+
+            // Echo the data back to the client.  
+            byte[] msg = Encoding.ASCII.GetBytes(msgLen + response);
+
+            sender.Send(msg);
         }
 
 
