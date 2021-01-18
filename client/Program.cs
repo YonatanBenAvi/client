@@ -40,29 +40,19 @@ namespace MyNewService
 
                     while (true)
                     {
-                        /*
-                        // Encode the data string into a byte array.  
-                        byte[] msg = Encoding.ASCII.GetBytes("This is a test<EOF>");
 
-                        // Send the data through the socket.  
-                        int bytesSent = sender.Send(msg);
-                        */
+                        String msg = ReciveMessageFromServer(sender);
 
-                        // Receive the response from the remote device.  
-                        int bytesRec = sender.Receive(bytes);
-
-                        String msg = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                        //MyNewService.WriteToLog(String.Format("Echoed test = {0}",msg));
                         HandleCommand(msg, sender);
 
 
-                        if (msg.Equals("done"))
+                        if (msg.Equals("done "))
                         {
                             break;
                         }
 
                     }
+
                     // Release the socket.  
                     Console.WriteLine("closing connection");
                     sender.Shutdown(SocketShutdown.Both);
@@ -111,7 +101,7 @@ namespace MyNewService
                     thread.Start();
                     break;
                 case "done":
-                    Console.WriteLine("i am done");
+                    Console.WriteLine("the server has requested to disconnect");
                     break;
                 case "chrome":
                     Console.WriteLine("opening chrome");
@@ -143,6 +133,21 @@ namespace MyNewService
 
 
             }
+        }
+
+        public static String ReciveMessageFromServer(Socket sender)
+        {
+            byte[] size = new byte[10];
+
+            // Receive the response from the remote device.  
+            int sizeLen = sender.Receive(size);
+
+
+            byte[] bytes = new byte[sizeLen];
+            int bytesRec = sender.Receive(bytes);
+
+            String msg = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+            return msg;
         }
 
 
