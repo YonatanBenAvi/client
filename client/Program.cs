@@ -17,69 +17,74 @@ namespace MyNewService
             byte[] bytes = new byte[1024];
 
             // Connect to a remote device.  
-            try
+            // try
+            //{ 
+
+            // Establish the remote endpoint for the socket.  
+            // This example uses port 11000 on the local computer.  
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+
+            // Create a TCP/IP  socket.  
+            Socket sender = new Socket(ipAddress.AddressFamily,
+                SocketType.Stream, ProtocolType.Tcp);
+
+            // Connect the socket to the remote endpoint. Catch any errors.  
+            //try
+            //{
+            sender.Connect(remoteEP);
+
+            Console.WriteLine(String.Format("Socket connected to {0}",
+                sender.RemoteEndPoint.ToString()));
+
+
+            while (true)
             {
-                // Establish the remote endpoint for the socket.  
-                // This example uses port 11000 on the local computer.  
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
 
-                // Create a TCP/IP  socket.  
-                Socket sender = new Socket(ipAddress.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
+                String msg = ReciveMessageFromServer(sender);
 
-                // Connect the socket to the remote endpoint. Catch any errors.  
-                try
+                String returnMsg = HandleCommand(msg, sender);
+
+                SendMessageToServer(sender, returnMsg);
+
+
+                if (msg.Equals("done") || msg.Equals("quit"))
                 {
-                    sender.Connect(remoteEP);
-
-                    Console.WriteLine(String.Format("Socket connected to {0}",
-                        sender.RemoteEndPoint.ToString()));
-
-
-                    while (true)
-                    {
-
-                        String msg = ReciveMessageFromServer(sender);
-
-                        String returnMsg = HandleCommand(msg, sender);
-
-                        SendMessageToServer(sender, returnMsg);
-
-
-                        if (msg.Equals("done "))
-                        {
-                            break;
-                        }
-
-                    }
-
-                    // Release the socket.  
-                    Console.WriteLine("closing connection");
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
-
-                }
-                catch (ArgumentNullException ane)
-                {
-                    Console.WriteLine("ArgumentNullException : {0}" + ane.ToString());
-                }
-                catch (SocketException se)
-                {
-                    Console.WriteLine("SocketException : {0}" + se.ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Unexpected exception : {0}" + e.ToString());
+                    break;
                 }
 
+            }
+
+            // Release the socket.  
+            Console.WriteLine("closing connection");
+            sender.Shutdown(SocketShutdown.Both);
+            sender.Close();
+
+
+            /*
+            catch (ArgumentNullException ane)
+            {
+                Console.WriteLine("ArgumentNullException : {0}" + ane.ToString());
+            }
+            catch (SocketException se)
+            {
+                Console.WriteLine("SocketException : {0}" + se.ToString());
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine("Unexpected exception : {0}" + e.ToString());
             }
+
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+            */
+        }
+    
+
 
 
         public static void Wait(TimeSpan t)
@@ -89,11 +94,18 @@ namespace MyNewService
 
         }
 
+
+
+
+
+
         public static String HandleCommand(String command, Socket sender)
         {
+            String[] commandArray = command.Split(" ");
+            String command1 = commandArray[0];
             String msgToBeReturned = "";
-            Console.WriteLine(command.Substring(0, command.IndexOf(" ")));
-            switch (command.Substring(0, command.IndexOf(" ")))
+            Console.WriteLine(command1);
+            switch (command1)
             {
                 case "time":
                     DateTime timeNow = DateTime.Now;
@@ -104,6 +116,7 @@ namespace MyNewService
                     thread.Start();
                     break;
                 case "done":
+                case "quit":
                     Console.WriteLine("the server has requested to disconnect");
                     msgToBeReturned = "by by server";
                     break;
@@ -122,15 +135,17 @@ namespace MyNewService
                     process.StartInfo = startInfo;
                     process.Start();
                     break;
-                case "file":
+                case "send_file":
                     // There is a text file test.txt located in the root directory.
-                    string fileName = "C:\\Users\\david\\Desktop\\test\\test1.txt";
+                    string fileName = @commandArray[1];
                     // Send file fileName to remote device
                     Console.WriteLine("Sending {0} to the host." + fileName);
-                    // Send the data through the socket.  
-                    string readText = File.ReadAllText(fileName) + "<EOF>";
-                    byte[] msg = Encoding.ASCII.GetBytes(readText);
-                    sender.Send(msg);
+                    byte[] file = File.ReadAllBytes(fileName);
+                    String fileLen = file.Length.ToString().PadLeft(10, '0'); ;
+                    byte[] fileLenBytes = Encoding.ASCII.GetBytes(fileLen);
+                    sender.Send(fileLenBytes);
+                    sender.Send(file);
+                    msgToBeReturned = "file has been sent succesfully";
                     break;
                 case "info":
                     msgToBeReturned = "I am yonatans client";

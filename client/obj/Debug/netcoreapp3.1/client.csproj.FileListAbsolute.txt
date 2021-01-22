@@ -19,3 +19,16 @@ C:\Users\david\source\repos\YonatanBenAvi\client\client\client\obj\Debug\netcore
 C:\Users\david\source\repos\YonatanBenAvi\client\client\client\obj\Debug\netcoreapp3.1\client.AssemblyInfo.cs
 C:\Users\david\source\repos\YonatanBenAvi\client\client\client\obj\Debug\netcoreapp3.1\client.dll
 C:\Users\david\source\repos\YonatanBenAvi\client\client\client\obj\Debug\netcoreapp3.1\client.pdb
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\bin\Debug\netcoreapp3.1\client.exe
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\bin\Debug\netcoreapp3.1\client.deps.json
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\bin\Debug\netcoreapp3.1\client.runtimeconfig.json
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\bin\Debug\netcoreapp3.1\client.runtimeconfig.dev.json
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\bin\Debug\netcoreapp3.1\client.dll
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\bin\Debug\netcoreapp3.1\client.pdb
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\obj\Debug\netcoreapp3.1\client.csprojAssemblyReference.cache
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\obj\Debug\netcoreapp3.1\client.AssemblyInfoInputs.cache
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\obj\Debug\netcoreapp3.1\client.AssemblyInfo.cs
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\obj\Debug\netcoreapp3.1\client.csproj.CoreCompileInputs.cache
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\obj\Debug\netcoreapp3.1\client.dll
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\obj\Debug\netcoreapp3.1\client.pdb
+C:\Users\shay\Source\Repos\YonatanBenAvi\client\client\obj\Debug\netcoreapp3.1\client.genruntimeconfig.cache
