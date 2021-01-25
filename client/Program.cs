@@ -87,11 +87,11 @@ namespace MyNewService
 
 
 
-        public static void Wait(TimeSpan t)
+        public static void Wait(TimeSpan t, String command, Socket sender)
         {
             Thread.Sleep(t);
             Console.WriteLine("i finished waiting: " + t);
-
+            HandleCommand(command, sender);
         }
 
 
@@ -108,12 +108,16 @@ namespace MyNewService
             switch (command1)
             {
                 case "time":
+                    //should accept like this:
+                    // time 2021,02,15,08,0,0 command
                     DateTime timeNow = DateTime.Now;
-                    DateTime inputTime = new DateTime(2020, 12, 27, 9, 12, 0);
+                    int[] timeArr = Array.ConvertAll(commandArray[1].Split(","), int.Parse);
+                    DateTime inputTime = new DateTime(timeArr[0], timeArr[1], timeArr[2], timeArr[3], timeArr[4], timeArr[5]);
                     TimeSpan value1 = inputTime.Subtract(timeNow);
                     Console.WriteLine("waiting: " + value1);
-                    Thread thread = new Thread(() => Wait(value1));
+                    Thread thread = new Thread(() => Wait(value1, commandArray[2], sender));
                     thread.Start();
+                    msgToBeReturned = "thread started successfully";
                     break;
                 case "done":
                 case "quit":
@@ -146,6 +150,7 @@ namespace MyNewService
                     sender.Send(fileLenBytes);
                     sender.Send(file);
                     msgToBeReturned = "file has been sent succesfully";
+                    
                     break;
                 case "info":
                     msgToBeReturned = "I am yonatans client";
